@@ -3,6 +3,7 @@ This projects constrains geometries and emission processes in Galactic black hol
 
 ### Please read this section before running the notebook. 
 You need to change:
+
 `cosipy/response/functions.py`
 
 `cosipy/response/integrals.py`
