@@ -165,7 +165,6 @@ def get_spectrum_unit(spectrum):
                 # ====================================================
                 # NEW: XSPEC additive models, including XS_eqpair
                 # ====================================================
-                if spectrum.__class__.__name__.startswith("XS_"):
                     spectrum_unit = 1.0 / (u.keV * u.cm**2 * u.s)
 
 
