@@ -8,4 +8,4 @@ You need to change:
 
 `cosipy/response/integrals.py`
 
-with the provided files in the repository to run sucessfully the spectral fitting. Also you need XSPEC to be installed in your machine. More information about XSPEC could be finded [here](https://heasarc.gsfc.nasa.gov/docs/software/xspec/).
+with the provided files in the repository to run sucessfully the spectral fitting. Also you need XSPEC to be installed on your machine. More information about XSPEC could be finded [here](https://heasarc.gsfc.nasa.gov/docs/software/xspec/).
