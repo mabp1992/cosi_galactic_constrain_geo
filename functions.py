@@ -64,54 +64,6 @@ def get_integrated_spectral_model(spectrum, energy_axis):
     return flux
 
 
-# def get_spectrum_unit(spectrum):
-#     """
-#     Get the unit of the spectral model.
-
-#     Parameters
-#     ----------
-#     spectrum : astromodels.functions
-#         One-dimensional spectral function from astromodels.
-
-#     Returns:
-#     astropy.unit for the spectrum
-
-#     """
-
-#     from cosipy.threeml import Band_Eflux
-
-#     spectrum_unit = None
-#     for param in spectrum.parameters.values():
-#         if param.is_normalization:
-#             spectrum_unit = param.unit
-#             break
-
-#     if spectrum_unit is None:
-#         match spectrum:
-#             case Constant():
-#                 spectrum_unit = spectrum.k.unit
-#             case Line() | Quadratic() | Cubic() | Quartic():
-#                 spectrum_unit = spectrum.a.unit
-#             case StepFunction() | StepFunctionUpper() | Cosine_Prior() | Uniform_prior() | DiracDelta():
-#                 spectrum_unit = spectrum.value.unit
-#             case PhAbs():
-#                 spectrum_unit = u.dimensionless_unscaled
-#             case Gaussian():
-#                 spectrum_unit = spectrum.F.unit / spectrum.sigma.unit
-#             case Band_Eflux():
-#                 spectrum_unit = spectrum.K.unit / spectrum.a.unit
-#             case _:
-#                 spectrum_unit = None
-#                 for pname in ('K', 'k'):
-#                     if pname in spectrum.parameters:
-#                         spectrum_unit = spectrum.parameters[pname].unit
-
-#                 if spectrum_unit is None:
-#                     raise RuntimeError("Spectrum not yet supported because units are unknown.")
-
-#     return spectrum_unit
-
-# MAB ////////////////////////////////////////////////////////////////////////////////////////////////////
 def get_spectrum_unit(spectrum):
     """
     Get the unit of the spectral model.
@@ -121,19 +73,14 @@ def get_spectrum_unit(spectrum):
     spectrum : astromodels.functions
         One-dimensional spectral function from astromodels.
 
-    Returns
-    -------
-    astropy.unit
-        Unit of the differential spectrum.
+    Returns:
+    astropy.unit for the spectrum
+
     """
 
     from cosipy.threeml import Band_Eflux
 
     spectrum_unit = None
-
-    # ============================================================
-    # Standard astromodels normalization parameter
-    # ============================================================
     for param in spectrum.parameters.values():
         if param.is_normalization:
             spectrum_unit = param.unit
@@ -141,35 +88,43 @@ def get_spectrum_unit(spectrum):
 
     if spectrum_unit is None:
         match spectrum:
-
             case Constant():
                 spectrum_unit = spectrum.k.unit
-
             case Line() | Quadratic() | Cubic() | Quartic():
                 spectrum_unit = spectrum.a.unit
-
             case StepFunction() | StepFunctionUpper() | Cosine_Prior() | Uniform_prior() | DiracDelta():
                 spectrum_unit = spectrum.value.unit
-
             case PhAbs():
                 spectrum_unit = u.dimensionless_unscaled
-
             case Gaussian():
                 spectrum_unit = spectrum.F.unit / spectrum.sigma.unit
-
             case Band_Eflux():
                 spectrum_unit = spectrum.K.unit / spectrum.a.unit
-
             case _:
+                # spectrum_unit = None
+                # for pname in ('K', 'k'):
+                #     if pname in spectrum.parameters:
+                #         spectrum_unit = spectrum.parameters[pname].unit
 
-                # ====================================================
-                # NEW: XSPEC additive models, including XS_eqpair
-                # ====================================================
-                    spectrum_unit = 1.0 / (u.keV * u.cm**2 * u.s)
+                # if spectrum_unit is None:
+                #     raise RuntimeError("Spectrum not yet supported because units are unknown.")
+                
+                
+                    spectrum_unit = None
+
+                    # Try to obtain the normalization unit from standard models
+                    for pname in ("K", "k"):
+                        if pname in spectrum.parameters:
+                            spectrum_unit = spectrum.parameters[pname].unit
+                            break
+
+                    # Fallback for XSPEC additive models, including XS_eqpair
+                    if spectrum_unit is None:
+                        spectrum_unit = 1.0 / (u.keV * u.cm**2 * u.s)
+
 
 
     return spectrum_unit
-# MAB ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 def get_integrated_extended_model(extendedmodel, image_axis, energy_axis):
